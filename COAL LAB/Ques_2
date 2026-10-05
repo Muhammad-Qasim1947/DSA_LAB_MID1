@@ -1,0 +1,44 @@
+;Write a program whose .code segment contains five labelled blocks written in exactly this source order:
+;Part3, Part1, Unused, Part2, Finish. Each block prints one message. Using only JMP instructions, make the
+;messages appear in the logical order shown below; the Unused block must remain in the program but must
+;never be executed. Beside every JMP, write a comment stating whether it is a forward or a backward jump.
+
+INCLUDE Irvine32.inc
+.data 
+     msg1 byte "Reached Part 1" , 0
+     msg2 byte "Reached Part 2" , 0
+     msg3 byte "Reached Part 3" , 0
+     msg4 byte "Reached Finish" , 0
+ 
+.code
+main PROC
+    jmp Part1
+Part3:
+    mov edx , offset msg3
+    call writestring
+    call crlf
+    jmp Unused
+
+Part1:
+    mov edx , offset msg1
+    call writestring
+    call crlf
+    jmp Part2
+
+Unused:
+    jmp Finish
+
+Part2:
+    mov edx , offset msg2
+    call writestring
+    call crlf
+    jmp Part3
+
+Finish:
+    mov edx , offset msg4
+    call writestring
+    call crlf
+
+exit 
+main ENDP
+END main
