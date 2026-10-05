@@ -1,0 +1,6 @@
+﻿Build started at 1:25 PM...
+1>------ Build started: Project: Sample2, Configuration: Debug Win32 ------
+1>  Assembling Source.asm...
+1>  Sample2.vcxproj -> C:\Users\STARHIVE\source\repos\Sample2\Debug\Sample2.exe
+========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========
+========== Build completed at 1:25 PM and took 01.331 seconds ==========
