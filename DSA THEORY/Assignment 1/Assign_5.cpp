@@ -108,14 +108,7 @@ public:
 
             else
             {
-                if (p1->price <= p2->price)
-                {
-                    addToMaster(p1);
-                }
-                else
-                {
-                    addToMaster(p2);
-                }
+                addToMaster(p1);
                 p1 = p1->next;
                 p2 = p2->next;
             }
