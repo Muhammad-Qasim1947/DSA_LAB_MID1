@@ -1,0 +1,23 @@
+;Declare a DWORD variable num holding 7. Using a single LOOP that runs ten times, display the multiplication
+;table of num from 1 to 10. MUL is not allowed, so each product must be built by repeated addition. Because ECX
+;counts downward, keep the multiplier that is displayed in a separate register that counts upward. In a comment,
+;explain what would happen if ECX were 0 when the loop began.
+
+INCLUDE Irvine32.inc
+.data 
+     num dword 7
+ 
+.code
+main PROC
+    mov eax , 0
+    mov ecx , 10 
+
+L1 :
+    add eax , num 
+    call writedec
+    call crlf
+    LOOP L1
+
+exit 
+main ENDP
+END main
