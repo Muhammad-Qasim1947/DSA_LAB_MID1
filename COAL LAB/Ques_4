@@ -1,0 +1,32 @@
+;Declare the WORD array shown below. Load ESI with the address of the last element using OFFSET, SIZEOF and
+;TYPE only (no hard-coded offsets), then use a LOOP to display the elements from last to first, moving the pointer
+;back with sub esi, TYPE arrayW after each access. While traversing, accumulate the total in EBX and
+;display it at the end. Explain in a comment why MOVZX is needed when an element is read into EAX.
+
+INCLUDE Irvine32.inc
+.data
+     arrayW WORD 12,25,37,48,50,63
+
+.code
+main PROC
+    mov esi, OFFSET arrayW + SIZEOF arrayW - TYPE arrayW  
+    mov ecx, LENGTHOF arrayW                               
+    mov ebx, 0                                          
+
+L1:
+    movzx eax, WORD PTR [esi]     
+    add   ebx, eax                
+    call  WriteDec                
+    mov   al, ' '
+    call  WriteChar
+    sub   esi, TYPE arrayW      
+    loop  L1
+
+    call  Crlf
+    mov   eax, ebx        
+    call  WriteDec
+    call  Crlf
+
+    exit
+main ENDP
+END main
