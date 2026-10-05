@@ -1,0 +1,50 @@
+;Declare a BYTE array of six test scores and a DWORD array of four salaries. Display the first and the last score,
+;where the last one must be reached with [scores + LENGTHOF scores - 1]. Using an indexed operand of
+;the form salaries[esi * TYPE salaries], display element 2, then overwrite element 3 with 50000 and
+;display it again. Finally, display TYPE, LENGTHOF and SIZEOF of the salary array on one line. In a comment,
+;state the byte offset of salaries[3] and show how it is calculated.
+
+INCLUDE Irvine32.inc
+.data 
+      scores BYTE 45,67,89,72,90,38
+      salaries DWORD 45000,52000,61000,48000
+ 
+.code
+main PROC
+     mov esi , offset scores 
+     movzx eax , BYTE PTR [esi]
+     call writedec
+     call crlf
+
+     movzx eax , BYTE PTR [scores + lengthof scores - 1]
+     call writedec
+     call crlf
+
+     mov esi , 2
+     mov eax , salaries [ esi * type salaries ]
+     call writedec
+     call crlf
+
+     mov esi , 3
+     mov salaries [ esi * type salaries] , 50000
+     mov eax , salaries [ esi * type salaries ]
+     call writedec
+     call crlf
+    
+     mov eax, type salaries         
+     call writedec
+     mov al, ' '
+     call writechar
+
+     mov eax, lengthof salaries     
+     call writedec
+     mov al, ' '
+     call writechar
+
+     mov eax, sizeof salaries       
+     call writedec
+     call crlf
+
+exit 
+main ENDP
+END main
