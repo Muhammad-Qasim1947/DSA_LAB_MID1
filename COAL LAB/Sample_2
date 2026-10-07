@@ -1,0 +1,57 @@
+INCLUDE Irvine32.inc
+
+.data
+     bookids     DWORD 101, 205, 310, 415, 520, 625, 730, 835
+                 DWORD 940, 1045, 1150, 1255, 1360, 1465, 1570, 1675
+     newrec      DWORD 16 DUP(?)
+     msg1        BYTE "Original : " , 0
+     msg2        BYTE "New Record : " , 0
+
+.code
+main PROC
+    mov  esi, OFFSET newrec
+    mov  ecx, 16 
+    mov  eax , 0
+
+reverse :
+    mov eax , bookids[ecx * 4 - 4]
+    mov [esi] , eax ;
+    add esi , 4
+    loop reverse
+
+;---------Original---------
+    mov edx , offset msg1
+    call writestring
+
+    mov  esi, 0
+    mov  ecx, 16
+
+DisplayOrig :
+    mov eax , bookids[esi * type bookids]
+    call writedec
+    mov al , ' ' 
+    call writechar
+    add  esi, 1
+    loop DisplayOrig
+    call Crlf
+
+;---------Reversed---------
+    mov edx , offset msg2
+    call writestring
+
+    mov esi , 0
+    mov ecx , 16
+    mov eax , 0
+
+DisplayReversed :
+    mov eax , newrec[esi * type newrec]
+    call writedec
+    mov al , ' ' 
+    call writechar
+    add  esi, 1
+    loop DisplayReversed
+    call Crlf
+
+    exit
+main ENDP
+END main
