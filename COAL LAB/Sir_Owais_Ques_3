@@ -65,6 +65,25 @@ innerloop :
      inc ebx
      mov ecx , count
      loop outerloop
+
+;=============Assebly Again Packing============
+     mov ecx , lengthof wordstr - 2
+     mov ebx , lengthof wordstr - 2
+outerloop2 :
+     mov esi , offset wordstr
+     mov count , ecx
+     mov ecx , ebx
+innerloop2 :
+     mov al , [esi]
+     call writechar
+     inc esi
+     loop innerloop2
+
+     call crlf
+
+     dec ebx
+     mov ecx , count
+     loop outerloop2
      call crlf
 
 ;==============Part 3==============
