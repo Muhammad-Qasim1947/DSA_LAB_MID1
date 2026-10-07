@@ -1,0 +1,90 @@
+INCLUDE Irvine32.inc
+
+.data
+     readings  word 1210h , 6720h , 8930h , 7640h , 4550h , 8660h , 9870h , 4580h , 8790h , 5799h
+               word 5566h , 3455h , 4335h , 6577h , 4546h , 8676h , 4545h , 7676h , 3465h , 7864h
+     
+     modified   word 20 DUP(?)
+     lowbytes  byte 20 DUP(?)
+     
+     msg1      byte "Original : " , 0
+     msg2      byte "Modified : " , 0
+     msg3      byte "Lower Bytes : " , 0
+
+.code
+main PROC
+     mov esi , offset readings
+     mov edi , offset modified
+     mov ebp , offset lowbytes
+     mov ecx , 20
+
+shift : 
+     mov ax , [esi]
+     mov [ebp] , al
+
+     mov edx , 0
+     mov bx , 4
+     div bx
+     mov bx , 8
+     mul bx
+     mov  [edi], ax 
+
+     add esi , 2        
+     add edi , 2
+     add ebp , 1  
+
+     loop goback
+     jmp shiftdone
+
+goback :
+     jmp shift
+
+shiftdone :
+     mov edx , offset msg1
+     call WriteString
+     mov esi , offset readings
+     mov ecx , 20
+
+showorig :
+     mov eax , 0 
+     mov ax  , [esi]
+     call writehex
+     mov al , ' '
+     call writechar
+     add esi , 2
+     loop showorig
+     call Crlf
+
+    mov edx , offset msg2
+    call writestring
+    mov esi , offset modified
+    mov ecx , 20
+
+showmodified :
+    mov eax , 0
+    mov ax , [esi]
+    call writehex
+    mov al , ' '
+    call writechar
+    add esi , 2
+    loop showmodified
+    call Crlf
+
+    mov edx , offset msg3
+    call writestring
+    mov esi , offset lowbytes
+    mov ecx , 20
+
+showlowerbytes :
+    mov eax , 0
+    mov al , [esi]
+    call writehex
+    mov al , ' '
+    call writechar
+    add esi , 1
+    loop showlowerbytes
+    call Crlf
+
+    exit
+main ENDP
+END main
