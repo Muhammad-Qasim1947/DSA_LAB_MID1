@@ -1,0 +1,72 @@
+INCLUDE Irvine32.inc
+
+.data
+    ids       DWORD 101, 102, 103, 104, 105, 106, 107, 108, 109, 110
+    newseq    DWORD 10 DUP(?)
+    msg1      BYTE "Original: ", 0
+    msg2      BYTE "New Sequence: ", 0
+
+.code
+main PROC
+
+    mov esi, OFFSET ids
+    mov edi, OFFSET newseq
+    add edi, 8              
+    mov ecx, 8
+
+L1:
+    mov eax, [esi]
+    mov [edi], eax       
+    add esi, 4
+    add edi, 4
+    loop L1
+
+    mov esi, OFFSET ids
+    add esi, 32           
+    mov edi, OFFSET newseq
+    mov ecx, 2
+
+L2:
+    mov eax, [esi]
+    mov [edi], eax
+    add esi, 4
+    add edi, 4
+    loop L2
+
+
+    ; Original array display
+    mov edx, OFFSET msg1
+    call WriteString
+
+    mov esi, OFFSET ids
+    mov ecx, 10
+
+displayorig:
+    mov eax, [esi]
+    call WriteDec
+
+    mov al, ' '
+    call WriteChar
+
+    add esi, 4
+    loop displayorig
+
+    call Crlf
+
+    mov edx, OFFSET msg2 
+    call WriteString 
+    mov esi, OFFSET newseq 
+    mov ecx, 10 
+
+displaynew: 
+    mov eax, [esi] 
+    call WriteDec 
+    mov al, ' ' 
+    call WriteChar 
+    add esi, 4 
+    loop displaynew 
+    call Crlf
+
+    exit
+main ENDP
+END main
