@@ -1,0 +1,62 @@
+;Read the user's name into a 31-byte buffer with ReadString. Then, inside a LOOP, prompt 
+;for and read five signed integers with ReadInt, storing each one in an array declared 
+;as values SDWORD 5 DUP(?). After input, greet the user by name, display the values in 
+;reverse order with WriteInt.
+
+INCLUDE Irvine32.inc
+
+ROWS = 3
+COLS = 4
+
+.data
+     inputs SDWORD 5 DUP(?)
+     msg    BYTE "Enter A Value : " , 0  
+     msg1   BYTE "Enter Your Name : " , 0
+     msg2   BYTE "Values In Reverse : " , 0
+     msg3   BYTE "Sum : " , 0
+     buffer BYTE 31 DUP(0)
+     count  DWORD ?
+     greetings BYTE "Hello , " , 0
+
+.code
+main PROC
+    mov edx , offset msg1
+    call writestring
+
+    mov edx, OFFSET buffer     
+    mov ecx, SIZEOF buffer - 1   
+    call ReadString          
+    mov count, eax            
+
+    mov esi , offset inputs
+    mov ecx , lengthof inputs
+L1 :
+    mov edx , offset msg
+    call writestring
+    call readint
+
+    mov [esi] , eax
+    add esi , 4
+    loop L1
+
+    mov edx , offset greetings
+    call writestring
+    mov edx, OFFSET buffer
+    call WriteString           
+    call Crlf
+
+    mov edx , offset msg2
+    call writestring
+    mov esi , offset inputs + 16
+    mov ecx , lengthof inputs
+L2 :  
+    mov eax , [esi]
+    call writeint
+    mov al , ' '
+    call writechar
+    sub esi , 4
+    loop L2
+
+    exit
+main ENDP
+END main
