@@ -1,0 +1,35 @@
+;Declare a null-terminated string source and a second array target declared 
+;as BYTE SIZEOF source DUP(0). Using ESI to walk source backward from its
+;last character and EDI to walk target forward, copy the characters in 
+;reverse order with a single LOOP. Display both strings with WriteString.
+;In a comment, explain why the loop count is LENGTHOF source - 1 and why 
+;target is still correctly null-terminated.
+
+INCLUDE Irvine32.inc
+.data
+    source BYTE "ASSEMBLY",0 
+    target BYTE SIZEOF source DUP(0)
+
+.code
+main PROC
+    mov esi , offset source + lengthof source - 2
+    mov edi , offset target
+    mov ecx , lengthof source - 1
+L1 :
+    mov al , byte ptr [esi]
+    mov [edi] , al
+    dec esi
+    inc edi
+    loop L1
+
+    mov edx , offset source
+    call writestring
+    call crlf
+
+    mov edx, OFFSET target
+    call WriteString      
+    call Crlf
+    
+    exit
+main ENDP
+END main
