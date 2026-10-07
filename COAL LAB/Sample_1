@@ -1,0 +1,94 @@
+INCLUDE Irvine32.inc
+
+.data
+    codes           DWORD 12345678h, 0A1B2C3D4h, 0FFFFFFFFh, 89ABCDEFh
+                    DWORD 0C0FFEE11h, 7F00AA55h, 11223344h, 0DEADBEEFh
+                    DWORD 40000001h, 80000002h, 0BADC0DE5h, 13579BDFh
+
+    transformed     DWORD 12 DUP(?)
+    refBytes        BYTE  12 DUP(?)
+    msg1            BYTE "Original : " , 0 
+    msg2            BYTE "Transformed : " , 0
+    msg3            BYTE "Lower Bytes : " , 0
+
+.code
+main PROC
+     mov esi , offset codes
+     mov edi , offset transformed
+     mov ebp , offset refBytes
+     mov ecx , 12
+
+ProcessStart :
+     mov eax , [esi]
+     mov [ebp] , al
+     
+     mov ebx , 4
+     mul ebx        ; eax = eax * ebx
+     mov edx , 0
+     mov ebx , 2
+     div ebx        ; eax = eax / ebx
+     mov [edi] , eax
+
+     add esi , 4
+     add edi , 4
+     add ebp , 1
+
+     loop goback
+     jmp ProcessDone
+
+goback :
+     jmp ProcessStart
+
+ProcessDone :
+;--------------------------Original--------------------------
+     mov edx , offset msg1
+     call writestring
+
+     mov esi , offset codes
+     mov ecx , 12
+
+showOrig :
+     mov eax , [esi]
+     call writehex
+     mov al , ' '
+     call writechar
+     add esi , 4
+     loop showOrig
+     call Crlf
+
+;--------------------------Transformed--------------------------
+     mov edx , offset msg2
+     call WriteString
+
+     mov esi , offset transformed
+     mov ecx , 12
+
+showTrans :
+     mov eax , [esi]
+     call writehex
+     mov al , ' '
+     call writechar
+     add esi , 4
+     loop showTrans
+     call Crlf
+
+;--------------------------Lower Bytes--------------------------
+     mov edx , offset msg3
+     call WriteString
+
+     mov esi , offset refBytes
+     mov ecx , 12
+
+showBytes :
+     mov eax , 0
+     mov al , [esi]
+     call writehex
+     mov al , ' '
+     call writechar
+     add esi , 1
+     loop showBytes
+     call Crlf
+
+    exit                               
+main ENDP
+END main
