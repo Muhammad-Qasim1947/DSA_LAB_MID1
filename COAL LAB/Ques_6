@@ -1,0 +1,42 @@
+;Declare an uninitialised array fib DWORD 12 DUP(?). Store 1 in the first two elements, 
+;then use a LOOP that runs LENGTHOF fib - 2 times to fill the rest, where every new 
+;element is the sum of the two elements before it, read through [esi - 8] and [esi - 4].
+;Display the series in decimal with a second loop, and then display the same array in 
+;hexadecimal with DumpMem, passing its arguments through OFFSET, LENGTHOF and TYPE.
+
+INCLUDE Irvine32.inc
+.data
+    fib DWORD 12 DUP(?)
+    space BYTE " ",0
+
+.code
+main PROC
+    mov esi , offset fib
+    mov dword ptr [esi] , 1
+    mov dword ptr [esi + 4] , 1
+
+    mov ecx , lengthof fib - 2 ;
+    add esi , 8
+
+L1 :
+    mov eax , [esi - 4]
+    add eax , [esi - 8]
+    mov [esi] , eax
+    add esi , 4
+    loop L1
+
+    mov esi, OFFSET fib
+    mov ecx, LENGTHOF fib
+L2:
+    mov eax, [esi]
+    call WriteDec      
+    mov edx, OFFSET space
+    call WriteString
+    add esi, 4
+    loop L2
+
+    call Crlf
+
+    exit
+main ENDP
+END main
