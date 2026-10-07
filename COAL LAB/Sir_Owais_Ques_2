@@ -1,112 +1,97 @@
 INCLUDE Irvine32.inc
 .data
-    offsetArray    sbyte -5 , 3 , -2 , 7
-    readingArray   sbyte lengthof offsetArray DUP(?)
-    adjusted       sbyte lengthof offsetArray DUP(?)
-    msg1           BYTE "Enter reading ",0
-    msg2           BYTE "Adjusted : " , 0
-    msg3           BYTE "R (DECIMAL) : " , 0
-    msg4           BYTE "R (HEXADECIMAL) : " , 0
-    msg5           BYTE "Lower Word Of R : " , 0
-    msg6           BYTE "Low Byte Of R : " , 0
-    colon BYTE ": ",0
-    numR           SDWORD ? 
-
+    arrayoffsets sbyte -5 , 3 , -2 , 7
+    readings     sbyte 4 DUP(?)
+    adjusted     sbyte 4 DUP(?)
+    msg1         byte "Enter Reading : " , 0 
+    msg2         byte "Adjusted Readings : " , 0
+    msg3         byte "R (decimal) : " , 0
+    msg4         byte "R (hexadecimal) : " , 0
+    msg5         byte "Low Word Of R : " , 0
+    msg6         byte "Low Byte Of R : " , 0
+    num          sdword ?
 
 .code
 main PROC
-;=============Taking Input=============
-    mov esi , offset readingArray
-    mov ecx , lengthof offsetArray
-    mov eax , 0
-    mov ebx , 1
+;===========Taking Input==========
+    mov ecx , lengthof readings
+    mov esi , offset readings
 L1 :
     mov edx , offset msg1
-    call writestring
-
-    mov eax , ebx
-    call writedec
-
-    mov edx , offset colon
-    call writestring
-
+    call writestring 
     call readint
-    mov [esi] , al
 
+    mov [esi] , al
     inc esi
-    inc ebx
     loop L1
 
-;=============Adjust Readings=============
-    mov esi , offset offsetArray
-    mov edi , offset readingarray
+;==========Add Offset With Readings========
+    mov ecx , lengthof readings
+    mov esi , offset readings
+    mov edi , offset arrayoffsets
     mov ebp , offset adjusted
-    mov ecx , lengthof offsetArray
 L2 :
-    movsx eax, BYTE PTR [esi]
-    movsx ebx, BYTE PTR [edi]
-    add eax, ebx
-    mov [ebp] , eax
-    
-    inc ebp
-    inc esi
+    mov al , [esi]
+    add al , [edi]
+    mov byte ptr [ebp] , al
+    inc esi 
     inc edi
+    inc ebp
     loop L2
 
     mov edx , offset msg2
     call writestring
-    
-    mov esi , offset adjusted
+
     mov ecx , lengthof adjusted
-
-L3 :
-    movsx eax , BYTE PTR [esi]
+    mov esi , offset adjusted
+L3 : 
+    movsx eax , byte ptr [esi] 
     call writeint
-    mov al , ' ' 
+    mov al , ' '
     call writechar
-
     inc esi
     loop L3
-    call crlf
 
-;============= R = - r0 + ( r1 -  r2 ) + r3 =============
-    movsx eax , adjusted[1]
-    movsx ebx , adjusted[2]
-    sub eax , ebx
-    movsx ebx , adjusted[0]
-    sub eax , ebx
-    movsx ebx , adjusted[3]
-    add eax , ebx
+;========= Calculating R ========
+    mov esi , offset adjusted
+    movsx eax , byte ptr [esi]                         ; r0
+    neg eax                                            ; -r0
+    movsx ebx , byte ptr [esi + type adjusted]         ; r1
+    movsx edx , byte ptr [esi + type adjusted * 2]     ; r2
+    sub ebx , edx                                      ; (r1 - r2)
+    add eax , ebx                                      ; -r0 + (r1 - r2)
+    movsx ebx , byte ptr [esi + type adjusted * 3]     ; r3
+    add eax , ebx                                      ; + r3
+    mov num , eax
     
-    mov edx , offset msg3
-    call writestring
-    call writedec
     call crlf
+    mov edx , offset msg3
+    call writestring 
+    call writedec
 
+    call crlf
     mov edx , offset msg4
     call writestring
     call writehex
+
+;============Lower Word And Byte Of R===========
     call crlf
 
-    mov numR , eax
-
-;============= Low_Word_&_Low_Byte OF NumR =============
     mov edx , offset msg5
     call writestring
     
-    mov eax, numR
-    movsx eax, ax
-    call WriteHex
+    mov eax, num
+    movzx eax, ax
+    mov ebx , type word
+    call WriteHexB
 
     call crlf
-
     mov edx , offset msg6
     call writestring
 
-    mov eax, numR
-    movsx eax, al
-    call WriteInt
-    call crlf
+    mov eax , num
+    movsx eax , al         
+    call Writeint
 
     exit
 main ENDP
