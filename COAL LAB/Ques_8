@@ -1,0 +1,66 @@
+;Declare the 3 × 4 DWORD matrix below in row-major order, using the constants
+;ROWS = 3 and COLS = 4. First, display the matrix row by row with a nested loop. 
+;Then compute and display the sum of each column: the outer loop moves across the 
+;lcolumns and the inner loop moves down one column by advancing the pointer with add 
+;esi, COLS * TYPE matrix. Explain in a comment why this step is 16 bytes, and why 
+;LENGTHOF matrix cannot be used as a loop count here.
+
+INCLUDE Irvine32.inc
+
+ROWS = 3
+COLS = 4
+
+.data
+    matrix DWORD 2, 4, 6, 8
+           DWORD 1, 3, 5, 7
+           DWORD 10, 20, 30, 40
+    count  DWORD ?
+    msg    BYTE "Column sums: ",0
+
+.code
+main PROC
+    mov esi, OFFSET matrix
+    mov ecx , ROWS
+outer :
+    mov count , ecx
+    mov ecx , COLS
+inner :
+    mov eax , [esi]
+    call writedec
+    mov al , ' '
+    call writechar
+    add esi , 4
+    loop inner
+    call crlf
+
+    mov ecx , count
+    loop outer
+    call crlf
+
+    mov edi , offset matrix
+    mov ecx , COLS
+colloop :
+    mov count , ecx
+    mov ecx , ROWS
+    mov eax , 0
+    mov esi , edi
+rowloop :
+    add eax , [esi]
+    add esi , COLS * 4
+    loop rowloop
+    
+    mov edx , offset msg
+    call writestring
+    call WriteDec            
+    mov al, ' '
+    call WriteChar
+    call crlf
+
+    add edi , 4
+    mov ecx , count
+    loop colloop
+    call crlf
+
+    exit
+main ENDP
+END main
