@@ -1,38 +1,36 @@
-;Using the constant ROWS = 5 and two nested LOOP instructions, print the number triangle shown below. Row n
-;contains the numbers 1 to n separated by spaces. Save the outer loop counter in a DWORD variable before the
-;inner loop and restore it before the outer LOOP, as shown in the lab manual. Because WriteChar overwrites AL,
-;keep the number being printed in a register other than EAX. In a comment, state how many times the inner loop
-;body executes in total.
+;Using the constant ROWS = 5 and two nested LOOP instructions, print the 
+;number triangle shown below. Row n contains the numbers 1 to n separated 
+;by spaces. Save the outer loop counter in a DWORD variable before the 
+;inner loop and restore it before the outer LOOP, as shown in the lab 
+;manual. Because WriteChar overwrites AL, keep the number being printed 
+;in a register other than EAX. In a comment, state how many times the 
+;inner loop body executes in total.
 
 INCLUDE Irvine32.inc
 
-ROWS = 5
+rows = 5
 .data
-     outerCount DWORD ?
+    count DWORD ?
 
 .code
 main PROC
-     mov ebx , 1 
-     mov ecx , rows
-
+    mov ecx , rows 
+    mov ebx , 1
 outer :
-     mov outerCount , ecx 
-     mov ecx , ebx
-     mov edx , 1
-
+    mov count , ecx 
+    mov ecx , ebx
+    mov eax , 1
 inner :
-     mov eax , edx
-     call writedec
-     mov al , ' '
-     call writechar
-     inc edx
-     loop inner
+    call writedec
+    inc eax 
+    loop inner
+    call crlf
 
-     call crlf
-     inc ebx
-     mov ecx , outerCount
-     loop outer
-
+    mov ecx , count
+    inc ebx
+    loop outer
+    call crlf
+    
     exit
 main ENDP
 END main
